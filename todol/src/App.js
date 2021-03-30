@@ -1,10 +1,12 @@
 import logo from './logo.svg';
 import {useState, useEffect} from 'react'
-import {Button, Container, Row, Col, Alert} from 'react-bootstrap';
+
+import {Button, Container, Row, Col, Alert, Spinner} from 'react-bootstrap';
 import {AddForm} from './components/form/AddForm'
 import './App.css';
 import { TaskList } from './components/taskList/TaskList';
 import {NoToDoList} from './components/taskList/NoToDoList'
+import{ createTask, getTaskLists } from './api/taskApi.js'
 
 
 
@@ -28,7 +30,11 @@ import {NoToDoList} from './components/taskList/NoToDoList'
     //const [totalHrs, setTotalHrs] = useState(0);
     const [itemToDelete, setItemToDelete] = useState([]);
     const [notToDoitemToDelete, setNotToDoItemToDelete] = useState([]);
-    
+    const [response, setResponse] = useState({
+      status: "",
+      message: ""
+    })
+    const [isPending, setIsPending] = useState(false)
    // useEffect(() => {
     
    // }, [itemToDelete])
@@ -45,17 +51,39 @@ import {NoToDoList} from './components/taskList/NoToDoList'
 
   const totalHrs = toDoTotalHrs + notToDoTotalHrs
 
- const handleOnAddTask = frmDt =>{
+ const handleOnAddTask = async frmDt =>{
 
   if (totalHrs + +frmDt.hr > 168){
     return alert("you have exceeded total weekly hours")
 
   }
+
+  setIsPending(true)
+  const res = await createTask(frmDt)
+  setResponse(res)
+  setIsPending(false)
+
+  if(res.status === 'success'){
+    const fetchTasks = await getTaskLists()
+    fetchTasks.length && setTaskLists(fetchTasks)
+  }
+  console.log(res);
+  //const urlEndpoint = "http://localhost:5000/api/v1";
   
-   setTaskLists([...taskLists, frmDt]);
+  
+   //setTaskLists([...taskLists, frmDt]);
    //setTotalHrs(totalHrs + +frmDt.hr)
    
  }
+
+ /*POST http://localhost:5000/api/v1
+Content-Type: application/json
+
+{
+    "task": "learning to code",
+    "hr": 15
+}
+*/
  
  const handleOnMarkAsNotToDo = index => {
    const item = taskLists[index];
@@ -85,7 +113,7 @@ import {NoToDoList} from './components/taskList/NoToDoList'
        return setItemToDelete([...itemToDelete, +value])
      }
 
-     const newlist = itemToDelete.filter(item => item !== value)
+     const newlist = taskLists.filter(item => item !== value)
      setItemToDelete(newlist)
 
      //console.log("change", checked, value);
@@ -138,7 +166,7 @@ import {NoToDoList} from './components/taskList/NoToDoList'
       return setNotToDoItemToDelete([...notToDoitemToDelete, +value])
     }
 
-    const newlist = notToDoitemToDelete.filter(item => item !== value)
+    const newlist = notToDoLists.filter(item => item !== value)
     setNotToDoItemToDelete(newlist)
 
     //console.log("change", checked, value);
@@ -160,15 +188,32 @@ import {NoToDoList} from './components/taskList/NoToDoList'
  </Col>
   </Row>
   <hr />
+
+<div>
+  {
+    response.message && (
+<Alert variant= {response.status==="success" ? "success" : "danger"}> {response.message}
+  </Alert>
+    )
+  }
+ 
+  {
+   isPending && <Spinner variant="primary" animation="border" />
+  }
+</div>
+
+
 <AddForm  handleOnAddTask ={handleOnAddTask}/>
 <hr />
 
 <Row>
 
   <Col>
-  <TaskList taskLists ={taskLists} 
+  <TaskList 
+  taskLists ={taskLists} 
   markAsNotdo={handleOnMarkAsNotToDo}
   handleOnChange={handleOnChange}
+  itemToDelete={itemToDelete}
   //deleteItems={deleteItems}
   
   
@@ -176,8 +221,11 @@ import {NoToDoList} from './components/taskList/NoToDoList'
   </Col>
 
   <Col>
- < NoToDoList  notToDoLists={notToDoLists}   markAsToDo={markAsToDo}
+ < NoToDoList  
+ notToDoLists={notToDoLists}  
+  markAsToDo={markAsToDo}
  handleOnChangeNotToDo={handleOnChangeNotToDo}
+ notToDoitemToDelete={notToDoitemToDelete}
  />
  </Col>
 </Row>

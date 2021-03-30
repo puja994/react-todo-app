@@ -1,7 +1,7 @@
 import React from 'react'
 import {Card, Button, Table, InputGroup,Alert } from 'react-bootstrap'
 
-export const NoToDoList = ({notToDoLists, markAsToDo, handleOnChangeNotToDo}) => {
+export const NoToDoList = ({notToDoLists, markAsToDo, handleOnChangeNotToDo,notToDoitemToDelete}) => {
 
   
     const totalSavedTime = notToDoLists.reduce((subTtl, item)=>{
@@ -28,7 +28,10 @@ export const NoToDoList = ({notToDoLists, markAsToDo, handleOnChangeNotToDo}) =>
     notToDoLists.map((row,i)=>
 
     <tr key={i}>
-      <td><input type="checkbox" defaultValue={i} onChange={handleOnChangeNotToDo}/>{""}
+      <td><input type="checkbox" defaultValue={i} onChange={handleOnChangeNotToDo}
+      checked={notToDoitemToDelete.includes(i)}
+      
+      />{""}
       <label>{row?.title}</label>
       </td>
       
