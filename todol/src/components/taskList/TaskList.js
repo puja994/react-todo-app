@@ -5,7 +5,7 @@ import "./taskList.css"
 
 
 
-export const TaskList = ({handleOnTask, taskLists, markAsToDo, markAsNotdo, handleOnChange}) => {
+export const TaskList = ({handleOnTask, taskLists, markAsNotTodo, handleOnChange, itemToDelete}) => {
     return (
         <>
         <h2>Task List  {' '}
@@ -31,8 +31,10 @@ export const TaskList = ({handleOnTask, taskLists, markAsToDo, markAsNotdo, hand
 
 {
   taskLists.map((row, i)=>
-    <tr key={row + i}>
-      <td><input type="checkbox" defaultValue={i} onChange={handleOnChange}/>{""}
+    <tr key={ i}>
+      <td><input type="checkbox" defaultValue={row._id} onChange={handleOnChange} checked={itemToDelete.includes(row._id)}
+      
+      />{""}
       <label>{row?.title}</label>
       </td>
       
@@ -42,7 +44,7 @@ export const TaskList = ({handleOnTask, taskLists, markAsToDo, markAsNotdo, hand
     </td>
     <td>{row?.hr}</td>
     <td>
-      <Button onClick={() => markAsNotdo(i)}> MarkAsNotToDo</Button>
+      <Button onClick={() => markAsNotTodo(row._id)}> MarkAsNotToDo</Button>
       
     </td>
 
@@ -50,11 +52,7 @@ export const TaskList = ({handleOnTask, taskLists, markAsToDo, markAsNotdo, hand
   </tr>
   
   )
-}
-
-
-   
-     
+}   
   </tbody>
 </Table>
         
