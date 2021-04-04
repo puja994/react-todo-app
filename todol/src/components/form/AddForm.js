@@ -3,7 +3,7 @@ import {Row, Col, Form, Button} from 'react-bootstrap'
 
 
 const initialFormData = {
-    title: "ghjhjhjh",
+    title: "test",
     hr: 10,
 
 };

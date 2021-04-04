@@ -1,0 +1,37 @@
+### test api
+#get api receive all task list
+GET http://localhost:5000/api/v1
+
+###post api
+
+POST http://localhost:5000/api/v1
+Content-Type: application/json
+
+{
+    "task": "learning to code",
+    "hr": 15
+}
+
+###patch
+
+PATCH http://localhost:5000/api/v1
+Content-Type: application/json
+
+{
+    "_id": "605eaff7c79cba0c0fd72ee2",
+    "todo": true
+}
+
+
+###PUT api
+
+PUT http://localhost:5000/api/v1
+
+###DELETE api
+DELETE http://localhost:5000/api/v1
+Content-Type: application/json
+
+{
+    "ids": []
+}
+
