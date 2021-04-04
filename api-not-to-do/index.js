@@ -5,9 +5,10 @@ import express from 'express';
 const app = express();
 import cors from 'cors'
 app.use(cors())
+import path from 'path'
 
 //import bodyParser from 'body-parser';
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 import router from"./router.js";
 
 //connecting to mongo database
@@ -28,11 +29,23 @@ app.use(express.json());
 
 app.use('/api/v1', router);
 
-app.use('/', (req,res)=>{
+const __dirname = path.resolve()
 
-    throw new Error("test error")
-    res.send("working")
-});
+
+if(process.env.NODE_ENV !== 'production'){
+   app.use(express.static(
+       path.join(path.join(__dirname, "/todol/build"))))
+
+       app.get('*', (req,res)=>{
+           res.sendFile(path.join(__dirname, '/todol/build/index.html'))
+       })
+
+   
+
+}else{
+    res.send('welcome to my app')
+}
+
 
 // app.use((error, req, res, next) =>{
 

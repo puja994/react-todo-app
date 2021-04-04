@@ -5,8 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node api-not-to-do/index.js",
+    "dev": "nodemon api-not-to-do/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix todol && npm run build --prefix todol"
   },
   "author": "",
   "license": "ISC",
