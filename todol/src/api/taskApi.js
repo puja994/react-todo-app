@@ -31,3 +31,33 @@ export const getTaskLists = () =>{
       }
     })
 }
+
+export const deleteTaskLists = ids =>{
+  //const {ids} = req.body
+  return new Promise (async(resolve,reject)=>{
+  try{
+     // throw new Error("some testing error")
+      const {data}= await axios. delete(rootUrl, {data: ids})
+      resolve(data)
+  
+    } catch(error){
+      resolve(false)
+
+    }
+  })
+}
+
+export const switchTask = (todo) =>{
+  //const {ids} = req.body
+  return new Promise (async(resolve,reject)=>{
+  try{
+     // throw new Error("some testing error")
+      const {data}= await axios. patch(rootUrl, {todo})
+      resolve(data)
+  
+    } catch(error){
+      resolve(false)
+
+    }
+  })
+}

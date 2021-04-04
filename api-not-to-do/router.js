@@ -46,10 +46,10 @@ router.put("/", (req,res)=>{
 
 ////update todolist
 router.patch("/", async (req,res)=>{
-
+const {todo} = req.body
     try{
 
-        const result = await updateToDo(req.body)
+        const result = await updateToDo(todo)
         res.json(result)
 
     }catch(error){
@@ -62,7 +62,7 @@ router.patch("/", async (req,res)=>{
 })
 
 router.delete("/", async (req,res)=>{
-    const {ids} = req.body
+    const ids = req.body
     const result =  await deleteTasks(ids)
     console.log(result)
 

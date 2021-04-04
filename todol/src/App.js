@@ -1,21 +1,21 @@
 import logo from './logo.svg';
 import {useState, useEffect} from 'react'
+import{useSelector} from 'react-redux'
 
 import {Button, Container, Row, Col, Alert, Spinner} from 'react-bootstrap';
 import {AddForm} from './components/form/AddForm'
 import './App.css';
 import { TaskList } from './components/taskList/TaskList';
 import {NoToDoList} from './components/taskList/NoToDoList'
-import{ createTask, getTaskLists } from './api/taskApi.js'
+import{ createTask, deleteTaskLists, getTaskLists, switchTask } from './api/taskApi.js'
 
 
 
-
-
-
- 
- 
+//form actions
+import {addTask} from './components/taskList/taskAction.js'
   const App = () =>{
+
+    const {isPending} = useSelector( state => state.task)
     //create new state
     //[] TODOS
     //[] add form ui
@@ -34,11 +34,28 @@ import{ createTask, getTaskLists } from './api/taskApi.js'
       status: "",
       message: ""
     })
-    const [isPending, setIsPending] = useState(false)
-   // useEffect(() => {
-    
-   // }, [itemToDelete])
+    // const [isPending, setIsPending] = useState(false)
 
+    useEffect (() =>{
+
+      const initialTask =  async () =>{
+
+
+      const fetchTasks = await getTaskLists()
+      if(fetchTasks?.length){
+        const todo = fetchTasks.filter(row => row.todo)
+        //fetchTasks && fetchTasks.length && setTaskLists(fetchTasks)
+        const nottodo = fetchTasks.filter(row => !row.todo)
+
+        setTaskLists(todo)
+        setNotToDoLists(nottodo)
+      }
+      
+      }
+      initialTask()
+    }, [])
+   // useEffect(() => {
+   // }, [itemToDelete])
    //calcykate tirtal hours
 
    const toDoTotalHrs = taskLists.reduce((subTtl, item)=>{
@@ -51,6 +68,18 @@ import{ createTask, getTaskLists } from './api/taskApi.js'
 
   const totalHrs = toDoTotalHrs + notToDoTotalHrs
 
+  const getAllTask = async () => {
+    const fetchTasks = await getTaskLists() || []
+    const todo = fetchTasks.filter(row => row.todo)
+        //fetchTasks && fetchTasks.length && setTaskLists(fetchTasks)
+        const nottodo = fetchTasks.filter(row => !row.todo)
+
+        setTaskLists(todo)
+        setNotToDoLists(nottodo)
+    //fetchTasks.length && 
+    //setTaskLists(fetchTasks)
+  }
+
  const handleOnAddTask = async frmDt =>{
 
   if (totalHrs + +frmDt.hr > 168){
@@ -58,48 +87,64 @@ import{ createTask, getTaskLists } from './api/taskApi.js'
 
   }
 
-  setIsPending(true)
+  // setIsPending(true)
   const res = await createTask(frmDt)
   setResponse(res)
-  setIsPending(false)
+  // setIsPending(false)
 
   if(res.status === 'success'){
-    const fetchTasks = await getTaskLists()
-    fetchTasks.length && setTaskLists(fetchTasks)
+    getAllTask()
   }
   console.log(res);
   //const urlEndpoint = "http://localhost:5000/api/v1";
-  
-  
-   //setTaskLists([...taskLists, frmDt]);
+  //setTaskLists([...taskLists, frmDt]);
    //setTotalHrs(totalHrs + +frmDt.hr)
    
  }
 
  /*POST http://localhost:5000/api/v1
 Content-Type: application/json
-
 {
     "task": "learning to code",
     "hr": 15
 }
 */
- 
- const handleOnMarkAsNotToDo = index => {
-   const item = taskLists[index];
-   const newArg = taskLists.filter((item, i)=> i !==index);
-   setTaskLists(newArg);
+const updateTask = async toUpdate =>{
+  
+  // setIsPending(true)
+  const result = await switchTask(toUpdate)
+  setResponse(result)
+  // setIsPending(false)
 
-   setNotToDoLists([...notToDoLists, item]);
+  getAllTask()
+}
+ 
+ const markAsNotTodo = _id => {
+
+  const toUpdate = {
+    _id,
+    todo: false
+  }
+
+  updateTask(toUpdate)
+ 
  }
 
- const markAsToDo = index =>{
-   const item = notToDoLists[index];
-   const newArg = notToDoLists.filter((item, i) => 
-   i!==index);
+ const markAsToDo = _id =>{
 
-   setNotToDoLists(newArg);
-   setTaskLists([...taskLists, item]);
+  const toUpdate = {
+    _id,
+    todo: true
+  }
+  updateTask(toUpdate)
+
+  //const result = switchTask(toUpdate)
+  //const item = notToDoLists[index];
+   //const newArg = notToDoLists.filter((item, i) => 
+   //i!==index);
+
+   //setNotToDoLists(newArg);
+   //setTaskLists([...taskLists, item]);
  }
 
  const handleOnTask = frmDt =>{
@@ -108,9 +153,10 @@ Content-Type: application/json
 
    const handleOnChange = e =>{
      const {checked, value} = e.target;
+     //alert(checked,value);
 
      if(checked){
-       return setItemToDelete([...itemToDelete, +value])
+       return setItemToDelete([...itemToDelete, value])
      }
 
      const newlist = taskLists.filter(item => item !== value)
@@ -140,46 +186,35 @@ Content-Type: application/json
 
        setNotToDoLists(newArg);
        setNotToDoItemToDelete([]);
-
-       //total hours from newArg
-
-       
-    
   }
    //delete item when button is clicked
 
-   const deleteItems = ()=>{
+   const deleteItems = async()=>{
      if(
      window.confirm ("Are you sure you want to delete the selected items?"))
      {
-      deleteFromTaskList()
-      deleteFromNotToDoTaskList()
+      //deleteFromTaskList()
+      //deleteFromNotToDoTaskList()
+      const deleteArg = itemToDelete.concat(notToDoitemToDelete);
+      const result = await deleteTaskLists(deleteArg)
+      setResponse(result)
+      getAllTask()
        
      }
    }
-
-
-   const handleOnChangeNotToDo =e =>{
+   const handleOnChangeNotToDo = e =>{
     const {checked, value} = e.target;
 
     if(checked){
-      return setNotToDoItemToDelete([...notToDoitemToDelete, +value])
+      return setNotToDoItemToDelete([...notToDoitemToDelete, value])
     }
-
     const newlist = notToDoLists.filter(item => item !== value)
     setNotToDoItemToDelete(newlist)
-
-    //console.log("change", checked, value);
-
   }
-  //delete item when button is clicked
-
- 
-
- 
+  
   return (
     <div className="main">
-    <Container  variant="danger">
+  <Container variant="danger">
   <Row>
   <Col>
     <div className="text-center mt-5">
@@ -211,7 +246,7 @@ Content-Type: application/json
   <Col>
   <TaskList 
   taskLists ={taskLists} 
-  markAsNotdo={handleOnMarkAsNotToDo}
+  markAsNotTodo={markAsNotTodo}
   handleOnChange={handleOnChange}
   itemToDelete={itemToDelete}
   //deleteItems={deleteItems}
