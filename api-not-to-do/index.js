@@ -43,7 +43,9 @@ if(process.env.NODE_ENV !== 'production'){
    
 
 }else{
-    res.send('welcome to my app')
+   app.get ('/', (req,res)=>{
+       res.send('working')
+   })
 }
 
 
