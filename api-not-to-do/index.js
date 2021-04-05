@@ -49,10 +49,9 @@ if(process.env.NODE_ENV !== 'production'){
 }
 
 
-// app.use((error, req, res, next) =>{
-
-//     res.send(error.message)
-// })
+ app.use((error, req, res, next) =>{
+   res.send(error.message)
+ })
 
 app.listen(PORT, error=>{
     error && console.log(error)
