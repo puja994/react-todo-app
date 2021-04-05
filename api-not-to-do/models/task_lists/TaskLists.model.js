@@ -23,6 +23,7 @@ export const insertTask = (newTask) => {
 }
 
 export const updateToDo = ({_id, todo}) =>{
+    if (!_id) return false
     return new Promise((resolve, reject)=>{
         try{
              //update tasklist

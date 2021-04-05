@@ -3,7 +3,7 @@ import {createSlice} from '@reduxjs/toolkit'
 const initialState ={
     isPending: false,
     status: "success",
-    message: "messaged"
+    message: "static messaged"
 }
 
 const taskSlice = createSlice({
@@ -21,7 +21,7 @@ const taskSlice = createSlice({
         },
         requestFail: (state, {payload}) =>{
             state.isPending = false;
-            state.state = "error";
+            state.status = "error";
             state.message = payload;
         },
     }
