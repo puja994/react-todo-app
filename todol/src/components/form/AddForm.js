@@ -1,58 +1,67 @@
-import React, {useState} from 'react'
-import {Row, Col, Form, Button} from 'react-bootstrap'
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addTask } from "../taskList/taskAction.js";
 
+import { Row, Col, Form, Button } from "react-bootstrap";
 
-const initialFormData = {
-    title: "test",
-    hr: 10,
-
+const initialFormDAta = {
+	title: "test",
+	hr: 10,
 };
+export const AddForm = () => {
+	const dispatch = useDispatch();
+	const { totalHrs } = useSelector(state => state.task);
 
-export const AddForm = ({handleOnAddTask}) => {
+	const [task, setTask] = useState(initialFormDAta);
 
-const [ task, setTask] = useState(initialFormData);
+	const handleOnChange = e => {
+		const { name, value } = e.target;
 
+		setTask({
+			...task,
+			[name]: name === "hr" ? +value : value,
+		});
+	};
 
-const handleOnChange = e =>{
-  const {name, value} = e.target;
-  setTask({
-    ...task,
-     [name]: value
-  })
-}
+	const handleOnSubmit = e => {
+		e.preventDefault();
 
-const handleOnSubmit = e => {
-  e.preventDefault();
-  handleOnAddTask(task);
-}
+		if (totalHrs + task.hr > 168) {
+			return alert(
+				"Adding this task will exceed the total amount of hours per week!"
+			);
+		}
 
+		dispatch(addTask(task));
+	};
 
-
-    return (
-        <div>
-            <Form onSubmit={handleOnSubmit}>
-  <Row>
-    <Col>
-      <Form.Control
-       placeholder="Task name" 
-      onChange= {handleOnChange}
-      name="title"
-      value={task.title} />
-    </Col>
-    <Col>
-      <Form.Control  
-      name="hr"
-      type="number" 
-      placeholder="number of hours" 
-      value={task.hr}
-      onChange={handleOnChange}
-       />
-    </Col>
-    <Col>
-    <Button  type="submit">Add task</Button>
-    </Col>
-  </Row>
-</Form>
-        </div>
-    )
-}
+	return (
+		<Form onSubmit={handleOnSubmit}>
+			<Row>
+				<Col>
+					<Form.Control
+						maxLength="15"
+						onChange={handleOnChange}
+						name="title"
+						placeholder="Task Name"
+						value={task.title}
+						required
+					/>
+				</Col>
+				<Col>
+					<Form.Control
+						type="number"
+						onChange={handleOnChange}
+						name="hr"
+						value={task.hr}
+						placeholder="number of hours"
+						required
+					/>
+				</Col>
+				<Col>
+					<Button type="submit">Add Task</Button>
+				</Col>
+			</Row>
+		</Form>
+	);
+};

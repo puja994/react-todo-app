@@ -1,63 +1,67 @@
-import axios from 'axios';
-const rootUrl = "/api/v1"
+import axios from "axios";
 
-export const createTask = frmData =>{
-    return new Promise (async(resolve,reject)=>{
-    try{
-       // throw new Error("some testing error")
-        const response= await axios.post(rootUrl, frmData)
-        resolve(response.data)
-    
-      } catch(error){
-        resolve({
-            status: "error" ,
-            message: error.message
-        })
+const rootUrl = "/api/v1";
 
-      }
-    })
-}
+export const createTask = frmData => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const response = await axios.post(rootUrl, frmData);
 
-export const getTaskLists = () =>{
-    return new Promise (async(resolve,reject)=>{
-    try{
-       // throw new Error("some testing error")
-        const {data}= await axios. get(rootUrl)
-        resolve(data.result)
-    
-      } catch(error){
-        resolve(false)
+			resolve(response.data);
+		} catch (error) {
+			console.log(error);
+			resolve({
+				status: "error",
+				message: error.message,
+			});
+		}
+	});
+};
 
-      }
-    })
-}
+export const getTaskLists = () => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const { data } = await axios.get(rootUrl);
 
-export const deleteTaskLists = ids =>{
-  //const {ids} = req.body
-  return new Promise (async(resolve,reject)=>{
-  try{
-     // throw new Error("some testing error")
-      const {data}= await axios. delete(rootUrl, {data: ids})
-      resolve(data)
-  
-    } catch(error){
-      resolve(false)
+			resolve(data.result);
+		} catch (error) {
+			console.log(error);
+			resolve({
+				status: "error",
+				message: error.message,
+			});
+		}
+	});
+};
 
-    }
-  })
-}
+export const deleteTaskLists = ids => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const { data } = await axios.delete(rootUrl, { data: ids });
 
-export const switchTask = (todo) =>{
-  //const {ids} = req.body
-  return new Promise (async(resolve,reject)=>{
-  try{
-     // throw new Error("some testing error")
-      const {data}= await axios. patch(rootUrl, {todo})
-      resolve(data)
-  
-    } catch(error){
-      resolve(false)
+			resolve(data);
+		} catch (error) {
+			console.log(error);
+			resolve({
+				status: "error",
+				message: error.message,
+			});
+		}
+	});
+};
 
-    }
-  })
-}
+export const switchTask = todo => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const { data } = await axios.patch(rootUrl, { todo });
+			console.log(data);
+			resolve(data);
+		} catch (error) {
+			console.log(error);
+			resolve({
+				status: "error",
+				message: error.message,
+			});
+		}
+	});
+};

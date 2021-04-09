@@ -3,20 +3,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { taskSwitch } from "./taskAction";
 import { setItemToDelete } from "./taskSlice";
 
-import { Button, Table, Alert } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 
-export const NoToDoList = () => {
+export const TaskLists = () => {
 	const dispatch = useDispatch();
-	const { notToDoLists, itemToDelete } = useSelector(state => state.task);
-
-	const totalSavedTime = notToDoLists.reduce(
-		(subTtl, row) => subTtl + row.hr,
-		0
-	);
+	const { taskLists, itemToDelete } = useSelector(state => state.task);
 
 	return (
 		<>
-			<h2>Not To Do Lists</h2>
+			<h2>Task Lists</h2>
 			<Table striped bordered hover size="sm">
 				<thead>
 					<tr>
@@ -26,7 +21,7 @@ export const NoToDoList = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{notToDoLists.map((row, i) => (
+					{taskLists.map((row, i) => (
 						<tr key={i}>
 							<td>
 								<input
@@ -37,27 +32,26 @@ export const NoToDoList = () => {
 								/>{" "}
 								<label>{row?.title}</label>
 							</td>
+
 							<td>{row?.hr}</td>
 							<td>
 								<Button
-									variant="primary"
 									onClick={() =>
 										dispatch(
 											taskSwitch({
 												_id: row._id,
-												todo: true,
+												todo: false,
 											})
 										)
 									}
 								>
-									Mark As To Do
+									Mark As Not To
 								</Button>
 							</td>
 						</tr>
 					))}
 				</tbody>
 			</Table>
-			<Alert variant="success">Your saved = {totalSavedTime} hours</Alert>
 		</>
 	);
 };
